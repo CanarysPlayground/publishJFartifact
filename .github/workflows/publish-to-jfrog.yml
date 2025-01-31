@@ -1,0 +1,36 @@
+name: Publish Artifact to JFrog Artifactory
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build the project
+        run: mvn clean package  # Build the Maven project
+
+      - name: Set up JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v3
+        with:
+          version: latest  # You can specify a specific version if needed
+
+      - name: Configure JFrog CLI
+        run: |
+          jf c add artifactory --url=${{ secrets.JFROG_URL }} --user=${{ secrets.JFROG_USERNAME }} --password=${{ secrets.JFROG_PASSWORD }}
+
+      - name: Publish artifact to JFrog Artifactory
+        run: |
+          jf rt upload target/my-app-1.0-SNAPSHOT.jar ${{ secrets.JFROG_REPO }}/my-app-1.0-SNAPSHOT.jar
