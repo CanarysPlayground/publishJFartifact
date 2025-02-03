@@ -1,0 +1,38 @@
+name: Build and Push Docker Image to JFrog Artifactory
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build the project
+        run: mvn clean package  # Build the Maven project
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to JFrog Artifactory
+        run: |
+          docker login ${{ secrets.JFROG_URL }} -u ${{ secrets.JFROG_USERNAME }} -p ${{ secrets.JFROG_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.JFROG_URL }}/${{ secrets.JFROG_DOCKER_REPO }}/my-app:latest .
+
+      - name: Push Docker image to JFrog Artifactory
+        run: |
+          docker push ${{ secrets.JFROG_URL }}/${{ secrets.JFROG_DOCKER_REPO }}/my-app:latest
