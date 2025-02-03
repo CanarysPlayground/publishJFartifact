@@ -39,7 +39,4 @@ jobs:
           push: true
           tags: |
             cnrys.jfrog.io/docker-trial/my-app:latest
-
-      - name: Push Docker image to JFrog Artifactory
-        run: |
-          docker push ${{ secrets.JFROG_URL }}/${{ secrets.JFROG_DOCKER_REPO }}/my-app:latest
+            cnrys.jfrog.io/docker-trial/my-app:${{ github.run_number }}
