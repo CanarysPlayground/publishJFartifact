@@ -30,11 +30,19 @@ jobs:
       - name: Log in to JFrog Artifactory
         run: |
           docker login ${{ secrets.JFROG_URL }} -u ${{ secrets.JFROG_USERNAME }} -p ${{ secrets.JFROG_PASSWORD }}
-
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@master
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            cnrys.jfrog.io/docker-trial/my-app:latest
       - name: Build Docker image
         run: |
           #docker build -t ${{ secrets.JFROG_URL }}/${{ secrets.JFROG_DOCKER_REPO }}/my-app:latest .
-          docker build -t https://cnrys.jfrog.io/docker-trial/my-app:latest .
+          docker build -t https://cnrys.jfrog.io/docker-trial/my-app:latest
 
       - name: Push Docker image to JFrog Artifactory
         run: |
