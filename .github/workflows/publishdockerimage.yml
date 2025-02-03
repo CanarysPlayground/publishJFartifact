@@ -33,7 +33,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.JFROG_URL }}/${{ secrets.JFROG_DOCKER_REPO }}/my-app:latest .
+          #docker build -t ${{ secrets.JFROG_URL }}/${{ secrets.JFROG_DOCKER_REPO }}/my-app:latest .
+          docker build -t https://cnrys.jfrog.io/docker-trial/my-app:latest .
 
       - name: Push Docker image to JFrog Artifactory
         run: |
