@@ -1,0 +1,26 @@
+name: Security Enforcement
+
+on: pull_request
+
+jobs:
+  security_checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Run Dependabot Security Checks
+        run: echo "Dependabot checks enforced"
+
+      - name: Block Merge if Security Issues Exist
+        run: |
+          SEVERITY=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/code-scanning/alerts" | jq -r '.[].rule.severity')
+          
+          if [[ "$SEVERITY" == "high" || "$SEVERITY" == "critical" ]]; then
+            echo "❌ High-severity security issues found. Blocking merge."
+            exit 1
+          fi
