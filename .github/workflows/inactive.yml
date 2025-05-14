@@ -1,0 +1,24 @@
+name: Delete Inactive Branches
+
+on:
+  push:
+    branches: ["main"]
+    
+  schedule:
+    - cron: '0 2 * * 1'  # Every Monday at 2AM UTC
+    
+  workflow_dispatch:     # Allows manual triggering
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dummy step
+        uses: actions/checkout@v3
+
+      - name: Clean up inactive branches
+        run: |
+          pip install requests
+          python cleanup.py
+        env:
+          GITHUB_PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
