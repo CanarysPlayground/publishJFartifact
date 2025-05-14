@@ -14,7 +14,7 @@ if not TOKEN:
     raise Exception("❌ GITHUB_PAT is not set.")
 
 HEADERS = {"Authorization": f"token {TOKEN}"}
-DAYS_INACTIVE = 90
+DAYS_INACTIVE = 45
 
 def get_default_branch():
     url = f"https://api.github.com/repos/{OWNER}/{REPO}"
